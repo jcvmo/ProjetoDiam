@@ -1,0 +1,16 @@
+{% if lista_receitas %}
+<ul>
+    {% for receita in lista_receitas %}
+    <li>
+        <a href="{% url 'principal:receitas_detalhe' receita.receita_id %}">
+            {{ receita.receita_nome }}
+        </a>
+    </li>
+    {% endfor %}
+</ul>
+{% else %}
+    <p>Nao ha receitas disponiveis.</p>
+{% endif %}
+
+<a href="{% url 'principal:receitas_criar' %}"> Criar receita </a>
+

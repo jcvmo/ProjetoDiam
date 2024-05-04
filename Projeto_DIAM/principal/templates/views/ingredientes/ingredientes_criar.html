@@ -1,0 +1,21 @@
+<body>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <h3>
+            Nome do Ingrediente:   <input type="text" id="ingrediente_nome" name="ingrediente_nome"><br><br>
+            Ingredientes:
+            <ul>
+            {% for categoria in categorias %}
+                <ul>
+                    <li><input type="radio" id="categoria_{{ categoria.categoria_id }}" name="categoria_id" value="{{ categoria.categoria_id }}">
+                        <label for="categoria_{{ categoria.categoria_id }}">{{ categoria.categoria_nome }}</label>
+                    </li>
+                </ul>
+            {% endfor %}
+            </ul>
+            Imagem:   <input type="file" id="ingrediente_imagem" name="ingrediente_imagem"><br><br>
+        </h3>
+
+        <button type="submit">Enviar receita</button>
+    </form>
+</body>

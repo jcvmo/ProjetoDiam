@@ -1,0 +1,16 @@
+{% if lista_ingredientes %}
+<ul>
+    {% for ingrediente in lista_ingredientes %}
+    <li>
+        <a href="{% url 'principal:ingredientes_detalhe' ingrediente.ingrediente_id %}">
+            {{ ingrediente.ingrediente_nome }}
+        </a>
+    </li>
+    {% endfor %}
+</ul>
+{% else %}
+    <p>Nao ha ingrediente disponiveis.</p>
+{% endif %}
+
+<a href="{% url 'principal:ingredientes_criar' %}"> Criar ingrediente </a>
+

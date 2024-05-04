@@ -1,0 +1,28 @@
+<body>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <h3>
+            Nome da receita:   <input type="text" id="receita_nome" name="receita_nome"><br><br>
+            Tempo de confeção:   <input type="number" id="receita_tempo_confecao" name="receita_tempo_confecao"><br><br>
+            Ingredientes:
+
+            <ul>
+            {% for categoria in categorias %}
+            <li>{{ categoria.categoria_nome }}:
+                <ul>
+                    {% for ingrediente in categoria.ingredientes.all %}
+                    <li><input type="checkbox" id="ingrediente_{{ ingrediente.ingrediente_id }}" name="ingredientes" value="{{ ingrediente.ingrediente_id }}">
+                        <label for="ingrediente_{{ ingrediente.ingrediente_id }}">{{ ingrediente.ingrediente_nome }}</label>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </li>
+            {% endfor %}
+        </ul>
+            Descrição: <input type="text" id="receita_descricao" name="receita_descricao"></textarea><br><br>
+            Imagem:   <input type="file" id="receita_imagem" name="receita_imagem"><br><br>
+        </h3>
+
+        <button type="submit">Enviar receita</button>
+    </form>
+</body>

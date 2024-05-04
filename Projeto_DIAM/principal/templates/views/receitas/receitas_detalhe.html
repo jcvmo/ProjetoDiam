@@ -1,0 +1,17 @@
+<h1>{{ receita.receita_nome }} feita pelo chef {{ receita.receita_user.user_nome_utilizador }}</h1>
+<h2>Faz em apenas {{ receita.receita_tempo_confecao }}min !</h2> <br>
+<h1>Ingredientes:</h1>
+    <ul>
+        {% for ingrediente in receita.ingredientes.all %}
+            <li>{{ ingrediente.ingrediente_nome }}</li>
+        {% endfor %}
+    </ul>
+<h1>{{ receita.receita_descricao }}</h1>
+
+{% if error_message %}
+<p><strong>{{ error_message }}</strong></p>
+{% endif %}
+
+<a href="{% url 'principal:receitas'%}">
+    Voltar atrás
+</a>
