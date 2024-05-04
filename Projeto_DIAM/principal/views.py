@@ -160,6 +160,7 @@ def utilizador_login(request):
 
         if User.objects.filter(user_nome_utilizador=user_nome_utilizador).exists():
             novo_utilizador = User.objects.get(user_nome_utilizador=user_nome_utilizador)
+
             if novo_utilizador.user_password == user_password:
                 request.session['user_id'] = novo_utilizador.user_id
                 return HttpResponseRedirect(reverse('principal:receitas'))
