@@ -1,5 +1,5 @@
 <body>
-    <form method="post" enctype="multipart/form-data">
+    <form method="post">
         {% csrf_token %}
 
         <h3>
@@ -8,7 +8,12 @@
         </h3>
 
         <button type="submit">Entrar na minha conta</button>
+
+        {% if error %}
+            <p>{{ error }}</p>
+        {% endif %}
     </form>
 </body>
 
-lalallalalala
+
+

@@ -1,7 +1,6 @@
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
 from django.urls import reverse
-from django.contrib.auth import authenticate, login
 from django.contrib import messages
 from .models import Receita, User, Categoria, Ingrediente
 
@@ -100,9 +99,10 @@ def utilizador_criar_user(request):
         if User.objects.filter(user_nome_utilizador=user_nome_utilizador).exists():
             messages.error(request, 'An account with this username already exists.')
             return render(request, 'views/utilizador/utilizador_criar.html')
-        if User.objects.filter(email=user_email).exists():
+        if User.objects.filter(user_email=user_email).exists():
             messages.error(request, 'An account with this email already exists.')
             return render(request, 'views/utilizador/utilizador_criar.html')
+
 
         novo_utilizador = User(user_nome_utilizador=user_nome_utilizador,
                                      user_email=user_email,
@@ -131,12 +131,12 @@ def utilizador_criar_admin(request):
         if User.objects.filter(user_nome_utilizador=user_nome_utilizador).exists():
             messages.error(request, 'An account with this username already exists.')
             return render(request, 'views/utilizador/utilizador_criar.html')
-        if User.objects.filter(email=user_email).exists():
+        if User.objects.filter(user_email=user_email).exists():
             messages.error(request, 'An account with this email already exists.')
             return render(request, 'views/utilizador/utilizador_criar.html')
 
         novo_utilizador = User(user_nome_utilizador=user_nome_utilizador,
-                                     user_email=user_email,
+                                     user_email= user_email,
                                      user_telefone = user_telefone,
                                      user_password = user_password,
                                      user_ativo = True,
@@ -145,7 +145,7 @@ def utilizador_criar_admin(request):
                                )
         novo_utilizador.save()
 
-        login(request, novo_utilizador)
+        request.session['user_id'] = novo_utilizador.user_id
 
         #return HttpResponseRedirect(reverse('principal:admin_dashboard'))
         return HttpResponseRedirect(reverse('principal:receitas'))
@@ -157,12 +157,19 @@ def utilizador_login(request):
     if request.method == 'POST':
         user_nome_utilizador = request.POST['user_nome_utilizador']
         user_password = request.POST['user_password']
-        novo_utilizador = authenticate(request, user_nome_utilizador=user_nome_utilizador, user_password=user_password)
 
-        if novo_utilizador is not None:
-            login(request, novo_utilizador)
-            return HttpResponseRedirect(reverse('principal:receitas'))
+        if User.objects.filter(user_nome_utilizador=user_nome_utilizador).exists():
+            novo_utilizador = User.objects.get(user_nome_utilizador=user_nome_utilizador)
+
+            if novo_utilizador.user_password == user_password:
+                request.session['user_id'] = novo_utilizador.user_id
+                return HttpResponseRedirect(reverse('principal:receitas'))
+            else:
+                messages.error(request, 'Invalid password.')
         else:
-            return render(request, 'views/utilizador/login.html', {'error': 'Invalid username or password.'})
+            messages.error(request, 'Invalid user.')
+        return render(request, 'views/utilizador/login.html')
 
     return render(request, 'views/utilizador/login.html')
+
+
