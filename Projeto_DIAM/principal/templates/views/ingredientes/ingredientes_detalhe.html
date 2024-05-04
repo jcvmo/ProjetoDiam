@@ -1,0 +1,13 @@
+<h1>{{ ingrediente.ingrediente_nome }} criado pelo admin {{ ingrediente.ingrediente_user.user_nome_utilizador }}</h1>
+
+<h1>{{ ingrediente.ingrediente_categoria.categoria_nome }}</h1>
+
+<h1>{{ ingrediente.ingrediente_descricao }}</h1>
+
+{% if error_message %}
+<p><strong>{{ error_message }}</strong></p>
+{% endif %}
+
+<a href="{% url 'principal:ingredientes'%}">
+    Voltar atrás
+</a>

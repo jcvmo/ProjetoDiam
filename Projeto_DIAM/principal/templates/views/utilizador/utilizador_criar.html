@@ -1,0 +1,14 @@
+<body>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <h3>
+            Nome de Utilizador:   <input type="text" id="user_nome_utilizador" name="user_nome_utilizador"><br><br>
+            E-mail:   <input type="email" id="user_email" name="user_email"><br><br>
+            Telefone: <input type="tel" id="user_telefone" name="user_telefone"><br><br>
+            Password:   <input type="password" id="user_password" name="user_password"><br><br>
+        </h3>
+
+        <button type="submit">Criar Conta</button>
+    </form>
+</body>

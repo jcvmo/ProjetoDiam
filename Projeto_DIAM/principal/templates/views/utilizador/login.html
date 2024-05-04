@@ -1,0 +1,12 @@
+<body>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <h3>
+            Nome de Utilizador:   <input type="text" id="user_nome_utilizador" name="user_nome_utilizador"><br><br>
+            Password:   <input type="password" id="user_password" name="user_password"><br><br>
+        </h3>
+
+        <button type="submit">Entrar na minha conta</button>
+    </form>
+</body>
