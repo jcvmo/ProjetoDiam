@@ -1,28 +1,94 @@
-<body>
+{% extends "../static/header_user.html" %}
+
+{% block content %}
+
+
+<div class="px-12 py-4">
+
     <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
-        <h3>
-            Nome da receita:   <input type="text" id="receita_nome" name="receita_nome"><br><br>
-            Tempo de confeção:   <input type="number" id="receita_tempo_confecao" name="receita_tempo_confecao"><br><br>
-            Ingredientes:
 
-            <ul>
-            {% for categoria in categorias %}
-            <li>{{ categoria.categoria_nome }}:
-                <ul>
-                    {% for ingrediente in categoria.ingredientes.all %}
-                    <li><input type="checkbox" id="ingrediente_{{ ingrediente.ingrediente_id }}" name="ingredientes" value="{{ ingrediente.ingrediente_id }}">
-                        <label for="ingrediente_{{ ingrediente.ingrediente_id }}">{{ ingrediente.ingrediente_nome }}</label>
-                    </li>
-                    {% endfor %}
-                </ul>
-            </li>
-            {% endfor %}
-        </ul>
-            Descrição: <input type="text" id="receita_descricao" name="receita_descricao"></textarea><br><br>
-            Imagem:   <input type="file" id="receita_imagem" name="receita_imagem"><br><br>
-        </h3>
+        <div class="space-y-12">
+            <div class="border-b border-gray-900/10 pb-12">
+                <h2 class="text-base font-semibold leading-7 text-gray-900">Receita</h2>
+                <p class="mt-1 text-sm leading-6 text-gray-600">Criar uma nova receita.</p>
 
-        <button type="submit">Enviar receita</button>
+                <div class="mt-10 grid grid-cols-1 gap-x-12 gap-y-8 sm:grid-cols-6">
+                    <div class="sm:col-span-2">
+                        <label for="receita_nome" class="block text-sm font-medium leading-6 text-gray-900">Nome da receita</label>
+                        <div class="mt-2">
+                            <div class="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600">
+                                <input type="text" id="receita_nome" name="receita_nome" autocomplete="receita_nome" class="block w-full border-0 bg-transparent py-1.5 pl-1 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6" placeholder="   arroz de pato" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="sm:col-span-2">
+                        <label for="receita_tempo_confecao" class="block text-sm font-medium leading-6 text-gray-900" >Tempo de confeção</label>
+                        <div class="mt-2">
+                            <div class="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600">
+                                <input type="number" id="receita_tempo_confecao" name="receita_tempo_confecao" autocomplete="receita_tempo_confecao" class="block w-full border-0 bg-transparent py-1.5 pl-1 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6" placeholder="   50 min" required>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-5 sm:col-span-4">
+                    <label for="receita_ingredientes" class="block text-sm font-medium leading-6 text-gray-900">Ingredientes</label>
+                    <div class="mt-2">
+                        <div class="flex flex-col space-y-4 rounded-md shadow-sm p-4 ring-1 ring-gray-300 focus-within:ring-2 focus-within:ring-indigo-600 sm:max-w-lg">
+                            {% for categoria in categorias %}
+                                <fieldset>
+                                <legend class="text-base font-semibold text-gray-900">{{ categoria.categoria_nome }} ({{ categoria.categoria_medida.medidas_nome }})</legend>
+                                <ul class="mt-2 pl-5 space-y-2">
+                                    {% for ingrediente in categoria.ingredientes.all %}
+                                        <li class="flex items-center space-x-3">
+                                            <label for="ingrediente_{{ ingrediente.ingrediente_id }}_quantidade" class="block font-medium text-gray-700">{{ ingrediente.ingrediente_nome }}</label>
+                                            <input type="number" id="ingrediente_{{ ingrediente.ingrediente_id }}_quantidade" name="ingrediente_{{ ingrediente.ingrediente_id }}_quantidade" min="0" class="block w-20 border-gray-300 rounded text-right focus:ring-indigo-500" placeholder="0">
+                                        </li>
+                                    {% endfor %}
+                                </ul>
+                                </fieldset>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="mt-5 col-span-full">
+                    <label for="about" class="block text-sm font-medium leading-6 text-gray-900">Descrição</label>
+                    <div class="mt-2">
+                        <textarea id="receita_descricao" name="receita_descricao" rows="6" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" placeholder="    A minha receita"></textarea>
+                    </div>
+                </div>
+
+                <div class="mt-5 col-span-full">
+                    <label for="cover-photo" class="block text-sm font-medium leading-6 text-gray-900">Imagem</label>
+                    <div class="mt-2 flex justify-center rounded-lg border border-dashed border-gray-900/25 px-6 py-10">
+                        <div class="text-center">
+                            <svg class="mx-auto h-12 w-12 text-gray-300" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                                <path fill-rule="evenodd" d="M1.5 6a2.25 2.25 0 012.25-2.25h16.5A2.25 2.25 0 0122.5 6v12a2.25 2.25 0 01-2.25 2.25H3.75A2.25 2.25 0 011.5 18V6zM3 16.06V18c0 .414.336.75.75.75h16.5A.75.75 0 0021 18v-1.94l-2.69-2.689a1.5 1.5 0 00-2.12 0l-.88.879.97.97a.75.75 0 11-1.06 1.06l-5.16-5.159a1.5 1.5 0 00-2.12 0L3 16.061zm10.125-7.81a1.125 1.125 0 112.25 0 1.125 1.125 0 01-2.25 0z" clip-rule="evenodd" />
+                            </svg>
+                            <div class="mt-4 flex text-sm leading-6 text-gray-600">
+                                <label for="receita_imagem" class="relative cursor-pointer rounded-md bg-white font-semibold text-indigo-600 focus-within:outline-none focus-within:ring-2 focus-within:ring-indigo-600 focus-within:ring-offset-2 hover:text-indigo-500">
+                                    <span>Upload a file</span>
+                                    <input type="file" id="receita_imagem" name="receita_imagem" class="sr-only">
+                                </label>
+                            </div>
+                        <p class="text-xs leading-5 text-gray-600">PNG, JPG, GIF</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+        <div class="mt-6 flex items-center justify-end gap-x-6">
+            <a href="../receitas/" class="text-sm font-semibold leading-6 text-gray-900">Voltar atrás</a>
+            <button type="submit" class="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">Criar Receita</button>
+        </div>
     </form>
-</body>
+
+</div>
+{% endblock %}

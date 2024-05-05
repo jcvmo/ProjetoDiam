@@ -3,16 +3,19 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
 from django.urls import reverse
 from django.contrib import messages
-from .models import Receita, User, Categoria, Ingrediente
+from .models import Receita, User, Categoria, Ingrediente, ReceitaIngrediente
+
 
 #receitas
 def receitas(request):
     lista_receitas = Receita.objects.all()
     return render(request, 'views/receitas/receitas_index.html', {'lista_receitas': lista_receitas})
+
 def receitas_detalhe(request, receita_id):
     receita = get_object_or_404(Receita, pk=receita_id)
     return render(request, 'views/receitas/receitas_detalhe.html', {'receita': receita})
 def receitas_criar(request):
+    ingredientes = Ingrediente.objects.all()
     categorias = Categoria.objects.all()
 
     if request.method == 'POST':
@@ -30,11 +33,19 @@ def receitas_criar(request):
                                receita_user=receita_user)
         nova_receita.save()
 
-        for ingrediente_id in request.POST.getlist('ingredientes'):
-            nova_receita.ingredientes.add(Ingrediente.objects.get(pk=ingrediente_id))
 
-        nova_receita.save()
+        for ingrediente in ingredientes:
+            quantidade = f'ingrediente_{ingrediente.ingrediente_id}_quantidade'
+            ingrediente_quantidade = request.POST.get(quantidade, '0')
 
+            print(ingrediente_quantidade)
+
+            if ingrediente_quantidade.isdigit() and int(ingrediente_quantidade) > 0:
+                ReceitaIngrediente.objects.create(
+                    receita=nova_receita,
+                    ingrediente=ingrediente,
+                    quantidade=int(ingrediente_quantidade)
+                )
         if 'receita_imagem' in request.FILES:
             nova_receita.receita_imagem = request.FILES['receita_imagem']
             nova_receita.save()

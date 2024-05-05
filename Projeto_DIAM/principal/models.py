@@ -27,7 +27,6 @@ class Ingrediente(models.Model):
     ingrediente_categoria = models.ForeignKey(Categoria, on_delete=models.CASCADE, related_name='ingredientes')
     ingrediente_user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True) #only admin
     ingrediente_imagem = models.FileField(upload_to='ingredientes/', blank=True, null=True) #ver se funciona
-    ingrediente_quantidade = models.IntegerField(default=0)
 
 class Receita(models.Model):
     receita_id = models.AutoField(primary_key=True)
@@ -36,8 +35,11 @@ class Receita(models.Model):
     receita_tempo_confecao = models.IntegerField() #confirmar integer field
     receita_imagem = models.FileField(upload_to='receita/', blank=True, null=True) #tive de instalar pillow- library de python para processar imagens
     receita_user = models.ForeignKey(User, on_delete=models.CASCADE)
-    ingredientes = models.ManyToManyField(Ingrediente)
 
+class ReceitaIngrediente(models.Model):
+    receita = models.ForeignKey('Receita', on_delete=models.CASCADE)
+    ingrediente = models.ForeignKey('Ingrediente', on_delete=models.CASCADE)
+    quantidade = models.IntegerField()
 class Armario(models.Model):
     armario_user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True)
     armario_ingredientes = models.ManyToManyField(Ingrediente)
