@@ -1,16 +1,33 @@
-{% if lista_ingredientes %}
-<ul>
-    {% for ingrediente in lista_ingredientes %}
-    <li>
-        <a href="{% url 'principal:ingredientes_detalhe' ingrediente.ingrediente_id %}">
-            {{ ingrediente.ingrediente_nome }}
-        </a>
-    </li>
-    {% endfor %}
-</ul>
-{% else %}
-    <p>Nao ha ingrediente disponiveis.</p>
-{% endif %}
+{% extends "../static/header_admin.html" %}
 
-<a href="{% url 'principal:ingredientes_criar' %}"> Criar ingrediente </a>
+{% block content %}
+<div class="px-12 py-4">
 
+ {% if lista_ingredientes %}
+
+  <ul role="list" class="divide-y divide-gray-100">
+   {% for ingrediente in lista_ingredientes %}
+     <li class="flex justify-between gap-x-10 py-5">
+        <div class="flex min-w-0 gap-x-10">
+        <img class="h-12 w-12 flex-none rounded-full bg-gray-50" src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="">
+        <div class="min-w-0 flex-auto">
+            <p class="text-sm font-semibold leading-6 text-gray-900">{{ ingrediente.ingrediente_nome }}</p>
+            <p class="mt-1 truncate text-xs leading-5 text-gray-500">Categoria -> {{ ingrediente.ingrediente_categoria.categoria_nome }}</p>
+        </div>
+        </div>
+        <div class="hidden shrink-0 sm:flex sm:flex-col sm:items-end">
+            <a href="{% url 'principal:ingredientes_detalhe' ingrediente.ingrediente_id %}" class="mt-1 text-xs leading-5 text-gray-500">Ver mais </a>
+        </div>
+     </li>
+   {% endfor %}
+  </ul>
+ {% else %}
+    <p class="text-sm leading-6 text-gray-900">Nao ha ingredientes criados.</p>
+ {% endif %}
+
+    <br>
+    <br>
+ <a class="font-medium text-indigo-600 hover:text-indigo-500 px-0 py-4"href="{% url 'principal:ingredientes_criar' %}"> Criar ingrediente </a>
+
+</div>
+{% endblock %}

@@ -1,13 +1,26 @@
-<h1>{{ ingrediente.ingrediente_nome }} criado pelo admin {{ ingrediente.ingrediente_user.user_nome_utilizador }}</h1>
+{% extends "../static/header_admin.html" %}
 
-<h1>{{ ingrediente.ingrediente_categoria.categoria_nome }}</h1>
+{% block content %}
 
-<h1>{{ ingrediente.ingrediente_descricao }}</h1>
-
-{% if error_message %}
-<p><strong>{{ error_message }}</strong></p>
-{% endif %}
-
-<a href="{% url 'principal:ingredientes'%}">
+<div class="px-12 py-4">
+  <div class="px-4 sm:px-0">
+    <h3 class="text-base font-semibold leading-7 text-gray-900">{{ ingrediente.ingrediente_nome }}</h3>
+    <p class="mt-1 max-w-2xl text-sm leading-6 text-gray-500">Pelo admin {{ ingrediente.ingrediente_user.user_nome_utilizador }}.</p>
+  </div>
+  <div class="mt-6 border-t border-gray-100">
+    <dl class="divide-y divide-gray-100">
+      <div class="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+        <dt class="text-sm font-medium leading-6 text-gray-900">Categoria</dt>
+        <dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">{{ ingrediente.ingrediente_categoria.categoria_nome }}</dd>
+      </div>
+      <div class="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+        <dt class="text-sm font-medium leading-6 text-gray-900">Imagem</dt>
+        <dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">{{ ingrediente.ingrediente_imagem }}</dd>
+      </div>
+    </dl>
+  </div>
+</div>
+<a href="{% url 'principal:ingredientes'%}" class="font-medium text-indigo-600 hover:text-indigo-500 px-12 py-4">
     Voltar atrás
 </a>
+{% endblock %}

@@ -1,17 +1,36 @@
-<h1>{{ receita.receita_nome }} feita pelo chef {{ receita.receita_user.user_nome_utilizador }}</h1>
-<h2>Faz em apenas {{ receita.receita_tempo_confecao }}min !</h2> <br>
-<h1>Ingredientes:</h1>
-    <ul>
-        {% for ingrediente in receita.ingredientes.all %}
-            <li>{{ ingrediente.ingrediente_nome }}</li>
-        {% endfor %}
-    </ul>
-<h1>{{ receita.receita_descricao }}</h1>
+{% extends "../static/header_user.html" %}
 
-{% if error_message %}
-<p><strong>{{ error_message }}</strong></p>
-{% endif %}
+{% block content %}
 
-<a href="{% url 'principal:receitas'%}">
+<div class="px-12 py-4">
+  <div class="px-4 sm:px-0">
+    <h3 class="text-base font-semibold leading-7 text-gray-900">{{ receita.receita_nome }}</h3>
+    <p class="mt-1 max-w-2xl text-sm leading-6 text-gray-500">Pelo chef {{ receita.receita_user.user_nome_utilizador }}.</p>
+  </div>
+  <div class="mt-6 border-t border-gray-100">
+    <dl class="divide-y divide-gray-100">
+      <div class="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+        <dt class="text-sm font-medium leading-6 text-gray-900">Tempo de confeção</dt>
+        <dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">{{ receita.receita_tempo_confecao }} minutos.</dd>
+      </div>
+      <div class="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+        <dt class="text-sm font-medium leading-6 text-gray-900">Ingredientes:</dt>
+        <dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
+            <ul>
+                {% for ingrediente in receita.ingredientes.all %}
+                    <li>{{ ingrediente.ingrediente_nome }}</li>
+                {% endfor %}
+            </ul>
+        </dd>
+      </div>
+      <div class="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+        <dt class="text-sm font-medium leading-6 text-gray-900">Descrição</dt>
+        <dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">{{ receita.receita_descricao }}</dd>
+      </div>
+    </dl>
+  </div>
+</div>
+<a href="{% url 'principal:receitas'%}" class="font-medium text-indigo-600 hover:text-indigo-500 px-12 py-4">
     Voltar atrás
 </a>
+{% endblock %}
