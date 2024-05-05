@@ -1,0 +1,32 @@
+# IntelliJ IDEA files
+.idea/
+*.iml
+*.ipr
+*.iws
+out/
+
+# Logs and databases
+*.log
+*.sqlite
+*.db
+
+# OS system files
+.DS_Store
+Thumbs.db
+
+# Virtual Environment
+venv/
+env/
+*.pyc
+
+# Build artifacts
+/target/
+/build/
+
+# Package directories
+node_modules/
+jspm_packages/
+
+# Ignore all SQLite DB files
+/db.sqlite3
+*.sqlite3
