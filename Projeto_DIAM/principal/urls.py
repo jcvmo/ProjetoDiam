@@ -13,5 +13,6 @@ urlpatterns = [
     path("criar_user/", views.utilizador_criar_user, name='utilizador_criar_user'),
     path("criar_admin/", views.utilizador_criar_admin, name='utilizador_criar_admin'),
     path("login/", views.utilizador_login, name='utilizador_login'),
+    path("home/", views.home, name='home'),
 
 ]

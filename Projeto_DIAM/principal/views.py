@@ -6,6 +6,14 @@ from django.contrib import messages
 from .models import Receita, User, Categoria, Ingrediente, ReceitaIngrediente
 
 
+def home(request):
+    user_count = User.objects.count()
+    receitas_count = Receita.objects.count()
+    ingredientes_count = Ingrediente.objects.count()
+
+
+    return render(request, 'views/utilizador/home.html', {'user_count': user_count,'receitas_count': receitas_count,'ingredientes_count': ingredientes_count})
+
 #receitas
 def receitas(request):
     lista_receitas = Receita.objects.all()
@@ -38,7 +46,6 @@ def receitas_criar(request):
             quantidade = f'ingrediente_{ingrediente.ingrediente_id}_quantidade'
             ingrediente_quantidade = request.POST.get(quantidade, '0')
 
-            print(ingrediente_quantidade)
 
             if ingrediente_quantidade.isdigit() and int(ingrediente_quantidade) > 0:
                 ReceitaIngrediente.objects.create(

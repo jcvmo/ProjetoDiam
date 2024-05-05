@@ -26,14 +26,14 @@ class Ingrediente(models.Model):
     ingrediente_nome = models.CharField(max_length=30)
     ingrediente_categoria = models.ForeignKey('Categoria', on_delete=models.CASCADE, related_name='ingredientes')
     ingrediente_user = models.ForeignKey('User', on_delete=models.SET_NULL, null=True)  # only admin
-    ingrediente_imagem = models.FileField(upload_to='ingredientes/', blank=True, null=True)
+    ingrediente_imagem = models.FileField(upload_to='principal/static/imagens/ingredientes/', blank=True, null=True)
 
 class Receita(models.Model):
     receita_id = models.AutoField(primary_key=True)
     receita_nome = models.CharField(max_length=30)
     receita_descricao = models.CharField(max_length=1000)
     receita_tempo_confecao = models.IntegerField()
-    receita_imagem = models.FileField(upload_to='receita/', blank=True, null=True)
+    receita_imagem = models.FileField(upload_to='principal/static/imagens/receita/', blank=True, null=True)
     receita_user = models.ForeignKey('User', on_delete=models.CASCADE)
 
 class ReceitaIngrediente(models.Model):
