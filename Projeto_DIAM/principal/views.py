@@ -24,22 +24,45 @@ def home(request):
 
 #receitas
 def receitas(request):
-    lista_receitas = Receita.objects.all()
-    return render(request, 'views/receitas/receitas_index.html', {'lista_receitas': lista_receitas})
+    query = request.GET.get('query', '')
+    ingredientes = request.GET.getlist('ingredients')  # Get list of selected ingredient ids
+
+    if query:
+        lista_receitas = Receita.objects.filter(
+            receita_nome__icontains=query)  # Filter recipes by name containing the query
+    else:
+        lista_receitas = Receita.objects.all()
+
+    if ingredientes:
+        lista_receitas = lista_receitas.filter(receitaingrediente__ingrediente__ingrediente_id__in=ingredientes).distinct()
+
+    lista_ingredientes = Ingrediente.objects.all()  # Fetch all ingredients for the dropdown
+
+    return render(request, 'views/receitas/receitas_index.html', {
+        'lista_receitas': lista_receitas,
+        'query': query,
+        'tipo':1,
+        'lista_ingredientes':lista_ingredientes
+    })
+
+@login_required()
+def receitas_minhas(request):
+    lista_receitas = Receita.objects.filter(receita_user=request.user)
+    return render(request, 'views/receitas/receitas_index.html', {'lista_receitas': lista_receitas ,'tipo' : 2 })
 
 
 
 def receitas_detalhe(request, receita_id):
     receita = get_object_or_404(Receita, pk=receita_id)
-    return render(request, 'views/receitas/receitas_detalhe.html', {'receita': receita})
+    receita_ingredientes = ReceitaIngrediente.objects.filter(receita=receita)
+    return render(request, 'views/receitas/receitas_detalhe.html', {'receita': receita, 'receita_ingredientes':receita_ingredientes})
 @login_required()
-
 def receitas_criar(request):
     ingredientes = Ingrediente.objects.all()
     categorias = Categoria.objects.all()
 
     if request.method == 'POST':
-        user_chef = User.objects.get(pk=1)
+        user_chef = get_object_or_404(User, pk=request.user.id)
 
         receita_nome = request.POST['receita_nome']
         receita_descricao = request.POST['receita_descricao']
@@ -156,7 +179,7 @@ def utilizador_criar_user(request):
 
         auth_login(request, novo_user)
 
-        return HttpResponseRedirect(reverse('principal:home'))
+        return render(request,'views/utilizador/home.html')
 
     return render(request, 'views/utilizador/utilizador_criar.html')
 
@@ -201,23 +224,17 @@ def utilizador_login(request):
         username = request.POST['username']
         password = request.POST['password']
 
-        print("Username: ", username)  # Debugging output
-        print("Password: ", password)  # Debugging output
-
         #  if novo_utilizador.user_password == user_password:
         novo_utilizador = authenticate(username=username, password=password)
-        print("Authenticated user: ", novo_utilizador)  # Debugging output
 
         if novo_utilizador is not None:
             login(request, novo_utilizador)
-
-            return render(request, 'views/utilizador/home.html')
+            return redirect('principal:home')
         else:
-            messages.error(request, 'Invalid username or password.')
+            messages.error(request, 'Username ou Password inválidos')
             return render(request, 'views/utilizador/login.html')
 
     return render(request, 'views/utilizador/login.html')
-
 
 
 @login_required()

@@ -19,7 +19,7 @@
     </div>
     <div class="flex-grow hidden lg:flex lg:items-center lg:justify-center space-x-6">
       <a href="/principal/receitas" class="text-sm font-semibold leading-6 text-gray-900">Todas as receitas</a>
-      <a href="#" class="text-sm font-semibold leading-6 text-gray-900">As minhas receitas</a>
+      <a href="/principal/receitas/minhas" class="text-sm font-semibold leading-6 text-gray-900">As minhas receitas</a>
       <a href="#" class="text-sm font-semibold leading-6 text-gray-900">O meu armário</a>
       {% if request.user.is_authenticated and request.user.utilizador.acesso == 2 %}
         <a href="/principal/ingredientes" class="text-sm font-semibold leading-6 text-gray-900">Todos os ingredientes</a>

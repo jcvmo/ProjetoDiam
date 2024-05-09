@@ -7,6 +7,7 @@ app_name = 'principal'  # Defina o namespace aqui
 
 urlpatterns = [
     path("receitas/", views.receitas, name='receitas'),
+    path("receitas/minhas/", views.receitas_minhas, name='receitas_minhas'),
     path('receitas/<int:receita_id>', views.receitas_detalhe, name='receitas_detalhe'),
     path("receitas/criar", views.receitas_criar, name='receitas_criar'),
     path("ingredientes/", views.ingredientes, name='ingredientes'),
