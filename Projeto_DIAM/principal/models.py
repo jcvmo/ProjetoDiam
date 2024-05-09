@@ -1,15 +1,17 @@
 from django.db import models
 from django.utils import timezone
+from django.contrib.auth.models import User
 
-class User(models.Model):
-    user_id = models.AutoField(primary_key=True)
-    user_nome_utilizador = models.CharField(max_length=30)
-    user_email = models.EmailField()
-    user_telefone = models.CharField(max_length=9)
-    user_password = models.CharField(max_length=40)
-    user_ativo = models.BooleanField(default=False) #ver se vale a pena ter ou se apagamos
-    user_criador = models.ForeignKey('self', on_delete=models.SET_NULL, null=True, blank=True) #confirmar se posso meter null=false e depois
-    user_acesso = models.IntegerField(default=1) #default = chefe
+class Utilizador(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    #id = models.AutoField(primary_key=True)
+    #nome_utilizador = models.CharField(max_length=30)
+    #email = models.EmailField()
+    telefone = models.CharField(max_length=9)
+    #password = models.CharField(max_length=40)
+    ativo = models.BooleanField(default=False) #ver se vale a pena ter ou se apagamos
+    #criador = models.ForeignKey('self', on_delete=models.SET_NULL, null=True, blank=True) #confirmar se posso meter null=false e depois
+    acesso = models.IntegerField(default=1) #default = chefe
 
 class Medidas(models.Model):
     medidas_id = models.AutoField(primary_key=True)
@@ -25,8 +27,9 @@ class Ingrediente(models.Model):
     ingrediente_id = models.AutoField(primary_key=True)
     ingrediente_nome = models.CharField(max_length=30)
     ingrediente_categoria = models.ForeignKey('Categoria', on_delete=models.CASCADE, related_name='ingredientes')
-    ingrediente_user = models.ForeignKey('User', on_delete=models.SET_NULL, null=True)  # only admin
+    ingrediente_user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)  # only admin
     ingrediente_imagem = models.FileField(upload_to='principal/static/imagens/ingredientes/', blank=True, null=True)
+
 
 class Receita(models.Model):
     receita_id = models.AutoField(primary_key=True)
@@ -34,7 +37,7 @@ class Receita(models.Model):
     receita_descricao = models.CharField(max_length=1000)
     receita_tempo_confecao = models.IntegerField()
     receita_imagem = models.FileField(upload_to='principal/static/imagens/receita/', blank=True, null=True)
-    receita_user = models.ForeignKey('User', on_delete=models.CASCADE)
+    receita_user = models.ForeignKey(User, on_delete=models.CASCADE)
 
 class ReceitaIngrediente(models.Model):
     receita = models.ForeignKey('Receita', on_delete=models.CASCADE)

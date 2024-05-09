@@ -1,4 +1,6 @@
 from django.urls import include, path
+from django.views.generic import TemplateView
+
 from . import views # (. significa que importa views da mesma directoria)
 
 app_name = 'principal'  # Defina o namespace aqui
@@ -13,6 +15,8 @@ urlpatterns = [
     path("criar_user/", views.utilizador_criar_user, name='utilizador_criar_user'),
     path("criar_admin/", views.utilizador_criar_admin, name='utilizador_criar_admin'),
     path("login/", views.utilizador_login, name='utilizador_login'),
+    path("logout/", views.utilizador_logout, name='utilizador_logout'),
     path("home/", views.home, name='home'),
+    path("403/", TemplateView.as_view(template_name='403'))
 
 ]

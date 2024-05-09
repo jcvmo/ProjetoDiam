@@ -1,17 +1,25 @@
-
-from django.http import HttpResponseRedirect
-from django.shortcuts import render, get_object_or_404
+from django.contrib.auth import authenticate, login
+from django.contrib.auth import login as auth_login
+from django.contrib.auth.decorators import login_required, user_passes_test
+from django.contrib.auth.hashers import make_password
+from django.http import HttpResponseRedirect, request
+from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse
 from django.contrib import messages
-from .models import Receita, User, Categoria, Ingrediente, ReceitaIngrediente
+from .models import Receita, User, Categoria, Ingrediente, ReceitaIngrediente, Utilizador
+
+
+def check_admin(user):
+    try:
+        return user.utilizador.acesso == 2
+    except Utilizador.DoesNotExist:
+        return False
 
 
 def home(request):
     user_count = User.objects.count()
     receitas_count = Receita.objects.count()
     ingredientes_count = Ingrediente.objects.count()
-
-
     return render(request, 'views/utilizador/home.html', {'user_count': user_count,'receitas_count': receitas_count,'ingredientes_count': ingredientes_count})
 
 #receitas
@@ -19,9 +27,13 @@ def receitas(request):
     lista_receitas = Receita.objects.all()
     return render(request, 'views/receitas/receitas_index.html', {'lista_receitas': lista_receitas})
 
+
+
 def receitas_detalhe(request, receita_id):
     receita = get_object_or_404(Receita, pk=receita_id)
     return render(request, 'views/receitas/receitas_detalhe.html', {'receita': receita})
+@login_required()
+
 def receitas_criar(request):
     ingredientes = Ingrediente.objects.all()
     categorias = Categoria.objects.all()
@@ -65,12 +77,23 @@ def receitas_criar(request):
 
 
 #ingredientes
+
+@login_required()
+@user_passes_test(check_admin)
 def ingredientes(request):
     lista_ingredientes = Ingrediente.objects.all()
     return render(request, 'views/ingredientes/ingredientes_index.html', {'lista_ingredientes': lista_ingredientes})
+
+@login_required()
+@user_passes_test(check_admin)
+
 def ingredientes_detalhe(request, ingrediente_id):
     ingrediente = get_object_or_404(Ingrediente, pk=ingrediente_id)
     return render(request, 'views/ingredientes/ingredientes_detalhe.html', {'ingrediente': ingrediente})
+
+@login_required()
+@user_passes_test(check_admin)
+
 def ingredientes_criar(request):
     categorias = Categoria.objects.all()
 
@@ -109,86 +132,98 @@ def armário(request):
 def utilizador_criar_user(request):
 
     if request.method == 'POST':
-        user_nome_utilizador = request.POST['user_nome_utilizador']
-        user_email = request.POST['user_email']
-        user_telefone = request.POST['user_telefone']
-        user_password = request.POST['user_password']
-        user_acesso = 1
+        username = request.POST['username']
+        email = request.POST['email']
+        telefone = request.POST['telefone']
+        password = request.POST['password']
 
-        if User.objects.filter(user_nome_utilizador=user_nome_utilizador).exists():
+        if User.objects.filter(username=username).exists():
             messages.error(request, 'An account with this username already exists.')
             return render(request, 'views/utilizador/utilizador_criar.html')
-        if User.objects.filter(user_email=user_email).exists():
+        if User.objects.filter(email=email).exists():
             messages.error(request, 'An account with this email already exists.')
             return render(request, 'views/utilizador/utilizador_criar.html')
 
+        novo_user = User.objects.create_user(username,
+                                              email,
+                                              password,
+                                              )
 
-        novo_utilizador = User(user_nome_utilizador=user_nome_utilizador,
-                                     user_email=user_email,
-                                     user_telefone = user_telefone,
-                                     user_password = user_password,
-                                     user_ativo = True,
-                                     user_acesso = user_acesso,
-                               )
+        novo_utilizador =Utilizador(user=novo_user, telefone=telefone, ativo=True, acesso=1)
+
+
         novo_utilizador.save()
 
-        return HttpResponseRedirect(reverse('principal:receitas'))
+        auth_login(request, novo_user)
+
+        return HttpResponseRedirect(reverse('principal:home'))
 
     return render(request, 'views/utilizador/utilizador_criar.html')
 
-
+@login_required()
+@user_passes_test(check_admin)
 def utilizador_criar_admin(request):
 
     if request.method == 'POST':
-        user_nome_utilizador = request.POST['user_nome_utilizador']
-        user_email = request.POST['user_email']
-        user_telefone = request.POST['user_telefone']
-        user_password = request.POST['user_password']
-        user_acesso = 2
-        user_criador = User.objects.get(pk=1)
+        username = request.POST['username']
+        email = request.POST['email']
+        telefone = request.POST['telefone']
+        password = request.POST['password']
+        acesso = 2
+        criador = User.objects.get(pk=1)
 
-        if User.objects.filter(user_nome_utilizador=user_nome_utilizador).exists():
+        if User.objects.filter(username=username).exists():
             messages.error(request, 'An account with this username already exists.')
             return render(request, 'views/utilizador/utilizador_criar.html')
-        if User.objects.filter(user_email=user_email).exists():
+        if User.objects.filter(email=email).exists():
             messages.error(request, 'An account with this email already exists.')
             return render(request, 'views/utilizador/utilizador_criar.html')
 
-        novo_utilizador = User(user_nome_utilizador=user_nome_utilizador,
-                                     user_email= user_email,
-                                     user_telefone = user_telefone,
-                                     user_password = user_password,
-                                     user_ativo = True,
-                                     user_acesso = user_acesso,
-                                     user_criador = user_criador,
-                               )
+        novo_user = User.objects.create_user(username,
+                                             email,
+                                             password,
+                                             )
+
+        novo_utilizador = Utilizador(user=novo_user, telefone=telefone, ativo=True, acesso=2)
+
         novo_utilizador.save()
 
-        request.session['user_id'] = novo_utilizador.user_id
+        auth_login(request, novo_user)
 
         #return HttpResponseRedirect(reverse('principal:admin_dashboard'))
-        return HttpResponseRedirect(reverse('principal:receitas'))
+        return HttpResponseRedirect(reverse('principal:home'))
 
     return render(request, 'views/utilizador/utilizador_criar.html')
 
 
 def utilizador_login(request):
     if request.method == 'POST':
-        user_nome_utilizador = request.POST['user_nome_utilizador']
-        user_password = request.POST['user_password']
+        username = request.POST['username']
+        password = request.POST['password']
 
-        if User.objects.filter(user_nome_utilizador=user_nome_utilizador).exists():
-            novo_utilizador = User.objects.get(user_nome_utilizador=user_nome_utilizador)
+        print("Username: ", username)  # Debugging output
+        print("Password: ", password)  # Debugging output
 
-            if novo_utilizador.user_password == user_password:
-                request.session['user_id'] = novo_utilizador.user_id
-                return HttpResponseRedirect(reverse('principal:receitas'))
-            else:
-                messages.error(request, 'Invalid password.')
+        #  if novo_utilizador.user_password == user_password:
+        novo_utilizador = authenticate(username=username, password=password)
+        print("Authenticated user: ", novo_utilizador)  # Debugging output
+
+        if novo_utilizador is not None:
+            login(request, novo_utilizador)
+
+            return render(request, 'views/utilizador/home.html')
         else:
-            messages.error(request, 'Invalid user.')
-        return render(request, 'views/utilizador/login.html')
+            messages.error(request, 'Invalid username or password.')
+            return render(request, 'views/utilizador/login.html')
 
     return render(request, 'views/utilizador/login.html')
 
 
+
+@login_required()
+def utilizador_logout(request):
+    if request.method == 'POST':
+        request.session.flush()
+        return HttpResponseRedirect(reverse('principal:home'))
+
+    return render(request, 'views/utilizador/logout.html')

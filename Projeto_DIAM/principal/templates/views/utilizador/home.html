@@ -1,6 +1,12 @@
-{% extends "../static/base_user.html" %}
+{% extends "../static/base.html" %}
 
 {% block content %}
+
+{% if request.user.is_authenticated %}
+    <p>O {{ request.user.username }} está logado</p>
+    {% else %}
+    <p>O utilizador não está logado</p>
+    {% endif %}
 
 <div class="bg-white py-24 sm:py-25">
   <div class="mx-auto max-w-7xl px-6 lg:px-8">
