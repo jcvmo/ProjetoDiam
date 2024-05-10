@@ -1,10 +1,6 @@
 {% extends "../static/base.html" %}
 
-
-
-
 {% block content %}
-
 
 <div class="px-12 py-4">
 
@@ -42,7 +38,7 @@
                         <div class="flex flex-col space-y-4 rounded-md shadow-sm p-4 ring-1 ring-gray-300 focus-within:ring-2 focus-within:ring-indigo-600 sm:max-w-lg">
                             {% for categoria in categorias %}
                                 <fieldset>
-                                <legend class="text-base font-semibold text-gray-900">{{ categoria.categoria_nome }} ({{ categoria.categoria_medida.medidas_nome }})</legend>
+                                <legend class="text-base font-semibold text-gray-900">{{ categoria.categoria_nome }} ( {{ categoria.categoria_medida.medidas_nome }} )</legend>
                                 <ul class="mt-2 pl-5 space-y-2">
                                     {% for ingrediente in categoria.ingredientes.all %}
                                         <li class="flex items-center space-x-3">

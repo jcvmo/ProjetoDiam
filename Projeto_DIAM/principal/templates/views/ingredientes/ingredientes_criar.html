@@ -30,7 +30,7 @@
 
                                 <div class="flex items-center gap-x-3">
                                     <input id="categoria_{{ categoria.categoria_id }}" name="categoria_id" type="radio" value="{{ categoria.categoria_id }}" class="h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-600" required>
-                                    <label for="categoria_{{ categoria.categoria_id }}" class="block text-sm font-medium leading-6 text-gray-900">{{ categoria.categoria_nome }}</label>
+                                    <label for="categoria_{{ categoria.categoria_id }}" class="block text-sm font-medium leading-6 text-gray-900">{{ categoria.categoria_nome }} ({{ categoria.categoria_medida.medidas_nome }})</label>
                                 </div>
 
                                 {% endfor %}

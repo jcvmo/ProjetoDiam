@@ -1,0 +1,60 @@
+{% extends "../static/base.html" %}
+
+{% block content %}
+<div class="px-12 py-4">
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="space-y-12">
+            <div class="border-b border-gray-900/10 pb-12">
+                <h2 class="text-base font-semibold leading-7 text-gray-900">Editar Receita</h2>
+                <p class="mt-1 text-sm leading-6 text-gray-600">Editar a receita de {{ receita.receita_nome }}.</p>
+
+                <!-- Recipe Name and Cooking Time -->
+                <div class="mt-10 grid grid-cols-1 gap-x-12 gap-y-8 sm:grid-cols-6">
+                    <!-- Recipe Name -->
+                    <div class="sm:col-span-2">
+                        <label for="receita_nome" class="block text-sm font-medium leading-6 text-gray-900">Nome da receita</label>
+                        <input type="text" id="receita_nome" name="receita_nome" value="{{ receita.receita_nome }}" required class="mt-2 block w-full rounded-md shadow-sm border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                    </div>
+                    <!-- Cooking Time -->
+                    <div class="sm:col-span-2">
+                        <label for="receita_tempo_confecao" class="block text-sm font-medium leading-6 text-gray-900">Tempo de confeção</label>
+                        <input type="number" id="receita_tempo_confecao" name="receita_tempo_confecao" value="{{ receita.receita_tempo_confecao }}" required class="mt-2 block w-full rounded-md shadow-sm border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                    </div>
+                </div>
+
+                <!-- Ingredients Section -->
+                <div class="mt-5 sm:col-span-4">
+                    <label for="receita_ingredientes" class="block text-sm font-medium leading-6 text-gray-900">Ingredientes</label>
+                    <div class="mt-2 flex flex-col space-y-4 rounded-md shadow-sm p-4 ring-1 ring-gray-300 focus-within:ring-2 focus-within:ring-indigo-600">
+                        {% for ingrediente in receita_ingredientes %}
+                            <div class="flex items-center space-x-3">
+                                <label for="ingrediente_{{ ingrediente.ingrediente.ingrediente_id }}_quantidade" class="block font-medium text-gray-700">{{ ingrediente.ingrediente.ingrediente_nome }}</label>
+                                <input type="number" id="ingrediente_{{ ingrediente.ingrediente.ingrediente_id }}_quantidade" name="ingrediente_{{ ingrediente.ingrediente.ingrediente_id }}_quantidade" value="{{ ingrediente.quantidade }}" min="0" class="block w-20 border-gray-300 rounded text-right focus:ring-indigo-500">
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- Description -->
+                <div class="mt-5 col-span-full">
+                    <label for="receita_descricao" class="block text-sm font-medium leading-6 text-gray-900">Descrição</label>
+                    <textarea id="receita_descricao" name="receita_descricao" rows="6" required class="mt-2 block w-full rounded-md shadow-sm border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">{{ receita.receita_descricao }}</textarea>
+                </div>
+
+                <!-- Image Upload -->
+                <div class="mt-5 col-span-full">
+                    <label for="receita_imagem" class="block text-sm font-medium leading-6 text-gray-900">Imagem</label>
+                    <input type="file" id="receita_imagem" name="receita_imagem" class="mt-2 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100">
+                </div>
+
+                <!-- Form Submission -->
+                <div class="mt-6 flex items-center justify-end gap-x-6">
+                    <a href="{% url 'principal:receitas' %}" class="text-sm font-semibold leading-6 text-gray-900">Voltar atrás</a>
+                    <button type="submit" class="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600" onclick="return confirm('Tens a certeza?')">Confirmar edição</button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+{% endblock %}

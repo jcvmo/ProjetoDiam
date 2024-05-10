@@ -1,7 +1,6 @@
 from django.contrib.auth import authenticate, login
 from django.contrib.auth import login as auth_login
 from django.contrib.auth.decorators import login_required, user_passes_test
-from django.contrib.auth.hashers import make_password
 from django.http import HttpResponseRedirect, request
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse
@@ -14,7 +13,6 @@ def check_admin(user):
         return user.utilizador.acesso == 2
     except Utilizador.DoesNotExist:
         return False
-
 
 def home(request):
     user_count = User.objects.count()
@@ -41,8 +39,8 @@ def receitas(request):
     return render(request, 'views/receitas/receitas_index.html', {
         'lista_receitas': lista_receitas,
         'query': query,
-        'tipo':1,
-        'lista_ingredientes':lista_ingredientes
+        'tipo': 1,
+        'lista_ingredientes' : lista_ingredientes
     })
 
 @login_required()
@@ -56,6 +54,37 @@ def receitas_detalhe(request, receita_id):
     receita = get_object_or_404(Receita, pk=receita_id)
     receita_ingredientes = ReceitaIngrediente.objects.filter(receita=receita)
     return render(request, 'views/receitas/receitas_detalhe.html', {'receita': receita, 'receita_ingredientes':receita_ingredientes})
+
+@login_required()
+def receitas_editar(request, receita_id):
+    receita = get_object_or_404(Receita, pk=receita_id)
+    receita_ingredientes = ReceitaIngrediente.objects.filter(receita=receita)
+
+    if request.method == 'POST':
+        receita.receita_nome = request.POST['receita_nome']
+        receita.receita_descricao = request.POST['receita_descricao']
+        receita.receita_tempo_confecao = request.POST['receita_tempo_confecao']
+
+        if 'receita_imagem' in request.FILES:
+            receita.receita_imagem = request.FILES['receita_imagem']
+        receita.save()
+
+        for ingrediente in receita_ingredientes:
+            quantidade = f'ingrediente_{ingrediente.ingrediente.ingrediente_id}_quantidade'
+            if quantidade in request.POST:
+                ingrediente_quantidade = request.POST[quantidade]
+                if ingrediente_quantidade.isdigit():
+                    ingrediente.quantidade = int(ingrediente_quantidade)
+                    ingrediente.save()
+
+        return HttpResponseRedirect(reverse('principal:receitas_detalhe', args=(receita.receita_id,)))
+
+    else:
+        return render(request, 'views/receitas/receitas_editar.html', {
+            'receita': receita,
+            'receita_ingredientes': receita_ingredientes
+        })
+
 @login_required()
 def receitas_criar(request):
     ingredientes = Ingrediente.objects.all()
@@ -96,6 +125,14 @@ def receitas_criar(request):
 
     else:
         return render(request, 'views/receitas/receitas_criar.html', {'categorias': categorias})
+
+def receitas_eliminar(request, receita_id):
+    if request.method == 'POST':
+        receita = get_object_or_404(Receita, pk=receita_id)
+        receita.delete()
+        return redirect('principal:receitas')
+    else:
+        return redirect('principal:receitas_detalhe', receita_id=receita_id)
 
 
 
